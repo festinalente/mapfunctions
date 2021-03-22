@@ -12,7 +12,11 @@ like other part of the object constructor
 */
 
 /** @constructor */
+//pass a queryselector or an html element
 function MapFunctions(baseelem, height){
+  if(typeof baseelem === 'string'){
+    baseelem = document.querySelector(baseelem);
+  }
   //locally scoped characteristics of the map
   var textinput,
       buttonBase,
@@ -73,9 +77,9 @@ function MapFunctions(baseelem, height){
     };
     /*This options removes the typical next next behaviour*/
     this.notnext = function(){
-      console.log('notNext' + notNext);
+
       notNext = true;
-      console.log('notNext' + notNext);
+
       return this;
     };
 
@@ -84,16 +88,11 @@ function MapFunctions(baseelem, height){
     };
 
     this.mapcanvas = L.canvas({});
-
-    /**
-      * @param {string} URL to map tiles
-      */
     this.generateMap =
-      function(tiles){
+      function(tileURL){
         if(displayed === false){
           var trainingArea = document.createElement('div');
-          document.querySelector(baseelem).appendChild(trainingArea);
-          console.log(baseelem);
+          baseelem.appendChild(trainingArea);
           coordinates = document.createElement('div');
           trainingArea.appendChild(coordinates);
           trainingArea.style.height = height;
@@ -101,7 +100,7 @@ function MapFunctions(baseelem, height){
           trainingArea.style.width = '100%';
 
           map = L.map(trainingArea, { layers: [
-              L.tileLayer(tiles, {
+              L.tileLayer(tileURL, {
               attribution: "<a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
             })],
             preferCanvas: true,
@@ -216,7 +215,7 @@ function MapFunctions(baseelem, height){
                   div.dataset.lng = locationResponse[i]['lon'];
                   div.classList.add('locationsCss');
                   div.addEventListener('click', function(){
-                    console.log('scroll evt 177');
+
                     map._container.scrollIntoView({block: 'start',  behavior: 'smooth' });
                   });
                   locations.appendChild(div);
@@ -256,7 +255,7 @@ function MapFunctions(baseelem, height){
         ){
         baselemForBtns = document.querySelector(baselemForBtns);
         buttonBase = baselemForBtns;
-        console.log(baselemForBtns);
+
         baselemForBtns.classList.add('emphasis', 'center');
         locationOptions = document.createElement('div');
         locationOptions.classList.add('locationOptions');
@@ -281,11 +280,11 @@ function MapFunctions(baseelem, height){
           meetGuide.setAttribute('type','button');
           meetGuide.addEventListener('click', function(event) {
             event.preventDefault();
-            var co = JSON.parse(document.querySelector(baseelem).dataset.coordinates);
+            var co = JSON.parse(baseelem.dataset.coordinates);
             lat = co[0];
             lng = co[1];
             meetingPointType = 'guidePoint';
-            console.log(meetingPointType);
+
             var link = 'Coordinates to meet at: ' + returnCoordinates().lat +
              ',' + returnCoordinates().lng + '. Link with directions: ';
             var locationPara = document.createElement('p');
@@ -377,9 +376,9 @@ function MapFunctions(baseelem, height){
         map = mapAsParam;
       }
       map.locate();
-      console.log('before');
+
       map.on('locationfound', function(e){
-        console.log('location found');
+
         lat = e.latlng.lat;
         lng = e.latlng.lng;
         swapMarker(e.latlng.lat, e.latlng.lng, "Your current location", true);
@@ -387,12 +386,12 @@ function MapFunctions(baseelem, height){
           route([{lat: e.latlng.lat, lng: e.latlng.lng},{lat: lat, lng: lng}]);
         }
 
-        console.log('scroll evt 341');
-        document.querySelector(baseelem).scrollIntoView({block: 'start',  behavior: 'smooth' });
+
+        baseelem.scrollIntoView({block: 'start',  behavior: 'smooth' });
         //enableRoute();
       });
       map.on('locationerror', function(e){
-        console.log('there was an error: ' + e.message + e.code);
+
       });
     }
 
@@ -400,7 +399,7 @@ function MapFunctions(baseelem, height){
     //those. If you want to use different values, pass them directly:
     this.swapMarker = function(latparam, lngparam, textparam, clientLocation){
       swapMarker(latparam, lngparam, textparam, clientLocation);
-      console.log('markers in obj '+markers);
+
       return this;
     };
 
@@ -409,13 +408,13 @@ function MapFunctions(baseelem, height){
     };
 
     function swapMarker(latparam, lngparam, textparam, clientLocationArg){
-      //console.log(JSON.stringify([...arguments]));
+      //
       if(latparam !== undefined){lat = latparam;}
       if(lngparam !== undefined){lng = lngparam;}
       if(textparam !== undefined){text = textparam;}
       if(typeof lat === String){lat = parseFloat(lat);}
       if(typeof lng === String){lng = parseFloat(lng);}
-      console.log('lat' + lat);
+
 
       (function markerGroup(){
         if(clientLocationArg){
@@ -429,7 +428,7 @@ function MapFunctions(baseelem, height){
       })();
 
       function addMarker(lat, lng, draggable, group){
-        //console.log(JSON.stringify([...arguments]));
+        //
         var marker = L.marker([lat, lng], {draggable: draggable}).addTo(group);
         marker.on('moveend', function(){
           var latlng = marker.getLatLng();
@@ -470,7 +469,7 @@ function MapFunctions(baseelem, height){
     };
 
     function addGuideRadius(coordinates, radius, differentmap, addtomap, checkWithinRadius, customMessage){
-      console.log([...arguments]);
+
       if(checkWithinRadius){
         map.addEventListener('click', function withinCircle(e) {
           if(!withinRadius(coordinates, returnCoordinates(), radius)){
@@ -498,7 +497,7 @@ function MapFunctions(baseelem, height){
         return circle;
       }
       else{
-        el = document.querySelector(baseelem);
+        el = baseelem;
         circle = L.circle(JSON.parse(el.dataset.coordinates),parseInt(el.dataset.radius *1000));
         if(addtomap){
           circle.addTo(map);
@@ -532,7 +531,7 @@ function MapFunctions(baseelem, height){
     };
 
     function enableRouting(){
-      console.log('enableroute');
+
       enableroute = true;
       return this;
     }
@@ -556,13 +555,13 @@ function MapFunctions(baseelem, height){
     //route([guidesSt.coordinates,{lat: lat, lng: lng}], false, false);
     function route(points, draggable, whileDragging){
       if(!points){
-        points = [JSON.parse(document.querySelector(baseelem).dataset.coordinates), {lat: lat, lng: lng}];
+        points = [JSON.parse(baseelem.dataset.coordinates), {lat: lat, lng: lng}];
       }
-      console.log('baselem' + baseelem);
-      let target = document.querySelector(baseelem).dataset.coordinates;
+
+      let target = baseelem.dataset.coordinates;
       providerCoordinates = points[0];
-      console.log('route hit' + JSON.stringify(points[0]));
-      console.log('route hit' + JSON.stringify(points[1]));
+
+
 
       if(customRoute){
         customRoute.getPlan().setWaypoints([]);
@@ -571,7 +570,7 @@ function MapFunctions(baseelem, height){
 
       /*
       xhrget({}, 'https://routing.swiftmo.com:8888', function(e){
-        console.log('EE' + e);
+
         if(e === '404'){
           setRouteServer('http://router.project-osrm.org/route/v1/viaroute', 'driving');
         }
@@ -616,7 +615,7 @@ function MapFunctions(baseelem, height){
           var s = sec_num % 60;
 
           var minnought = function(mh){
-            console.log(mh.toString().length);
+
             if(mh.toString().length === 1 && mh === m){
               return ':0';
             }
@@ -632,11 +631,11 @@ function MapFunctions(baseelem, height){
 
         distance = (e.route.summary.totalDistance/1000).toFixed(2) * 2;
         traveltime = returnTime(distance, 90);
-        travelCost = parseInt(document.querySelector(baseelem).dataset.travelcharge * distance);
+        travelCost = parseInt(baseelem.dataset.travelcharge * distance);
 
         var routetitle = "This requires a " + distance + " km return trip taking about " + traveltime + " h.";
 
-        if(document.querySelector(baseelem).dataset.travelcharge != 0){
+        if(baseelem.dataset.travelcharge != 0){
           routetitle += " This has an added cost of €" + (travelCost / 100).toFixed(2) + ".";
         }
 
@@ -713,17 +712,17 @@ function MapFunctions(baseelem, height){
     };
     //it defaults to the map that the call generates, pass coordinates if different:
     function addGuideMarker(coordinates, message){
-      console.log(typeof coordinates);
+
       if(message === undefined){
         message = 'This guide\'s meetup point';
       }
       if(coordinates){
-        console.log(map);
+
         guidemarker = L.marker(coordinates, {draggable: false}).addTo(map);
         guidePoint = guidemarker.bindPopup(message).openPopup();
       }
       else{
-        guidemarker = L.marker(JSON.parse(document.querySelector(baseelem).dataset.coordinates), {draggable: false}).addTo(map);
+        guidemarker = L.marker(JSON.parse(baseelem.dataset.coordinates), {draggable: false}).addTo(map);
         guidePoint = guidemarker.bindPopup('This guide\'s meetup point').openPopup();
       }
       return this;
@@ -738,7 +737,7 @@ function MapFunctions(baseelem, height){
       swapMarkerparam = swapMarkerparam;
       save = save;
 
-      //console.log([...arguments]);
+      //
       map.addEventListener('click', function onLocationFound(e) {
         if(circle){
           map.removeLayer(circle);
@@ -748,15 +747,13 @@ function MapFunctions(baseelem, height){
           lat = e.latlng.lat;
           lng = e.latlng.lng;
           meetingPointType = 'mapClick';
-          text = "Your chosen location";
+          text = "Your chosen location: " + e.latlng.lat + ',' + e.latlng.lng;
 
           if(circle){
-            console.log('inside swap circle');
             radius = parseInt(document.getElementById('trainingradius').value * 1000);
             circle = L.circle({lat: e.latlng.lat, lng: e.latlng.lng }, radius).addTo(map);
           }
           if(swapMarkerparam){
-            console.log('inside swap marker');
             swapMarker();
           }
           //displaytickprev(document.getElementById("trainingAreaHolder"));
@@ -782,7 +779,7 @@ function MapFunctions(baseelem, height){
           }
         }
         if(enableroute){
-          route([JSON.parse(document.querySelector(baseelem).dataset.coordinates), {lat: e.latlng.lat, lng: e.latlng.lng}]);
+          route([JSON.parse(baseelem.dataset.coordinates), {lat: e.latlng.lat, lng: e.latlng.lng}]);
         }
       });
       return this;
@@ -836,14 +833,14 @@ function MapFunctions(baseelem, height){
         while(select.children.length > 1){
           select.removeChild(select.lastChild);
         }
-        console.log(data);
+
         makeOptions(data);
       }
 
       function makeOptions(data){
         data.forEach(function(r){
           r.data.services.forEach(function(e){
-            console.log(e);
+
             if(servicesAr.includes(e) === false){
               var optionNew = document.createElement('option');
                   optionNew.setAttribute('value', e);
@@ -887,18 +884,18 @@ function MapFunctions(baseelem, height){
       else{
         guidesSt = guides;
       }
-      //console.log('loadmarkers' +guidesSt);
+      //
       hideOrDisplaySportCards(guidesSt);
 
       for(var i = 0; i < guidesSt.length; i++){
         //split and make diffent markers for different services by the same provider
         if(guidesSt[i].data.services.length <= 1){
-          console.log('one'+guidesSt[i]);
+
           makeMarkers(guidesSt[i], 0);
         }
         else{
           for(var j = 0; j < guidesSt[i].data.services.length; j++){
-            console.log('many'+JSON.stringify(guidesSt[i]));
+
             makeMarkers(guidesSt[i], j);
             //see if there is a way to avoid re requesting data for the same area: Storing coords or whatevs
             //mapInst.madeMarkers.push(guidesSt[i].verificationcode + "-" + sport);
@@ -914,7 +911,7 @@ function MapFunctions(baseelem, height){
       }
       //no marker, wipe the slate:
       if(guidesSt.length === 0){
-        console.log("no guides" + guidesSt.length);
+
         markers.clearLayers();
         madeMarkers.length = 0;
 
@@ -955,11 +952,11 @@ function MapFunctions(baseelem, height){
      * @fires loadMarkers
      */
     function loadProvidersAndSports(sport, cards, link){
-      console.log([...arguments]);
-      //location-providers console.log('link'+ link);
+
+      //location-providers
       var bounds = map.getBounds();
       xhr({coordinates: bounds, sport: sport, cards: cards}, link, function(callback){
-        console.log(callback);
+
         if(cards){
           //n.b. note that in the rental template 'guides cards '
 
@@ -978,7 +975,7 @@ function MapFunctions(baseelem, height){
             var data = JSON.parse(document.getElementById('supplierCardCollection').firstChild.dataset.supplierdata);
             //load the data in the template like guides app.
             loadMarkers(data, sport);
-            console.log('data' + data);
+
             typeDropdown(data);
 
             //See comment on line 178 re. initializeCards
@@ -990,7 +987,7 @@ function MapFunctions(baseelem, height){
         }
 
         else {
-            console.log('callback in 885 ' + callback);
+
           loadMarkers(callback, sport);
           typeDropdown(callback);
         }
@@ -1005,13 +1002,13 @@ function MapFunctions(baseelem, height){
        * @fires loadProvidersAndSports on map move end, 'moveend'.
        */
       map.on('load', function(e) {
-        console.log('load');
+
         loadProvidersAndSports(sport, cards, link);
       });
 
       map.on('moveend', function(e) {
         //if the map is visible:
-        console.log('moveend' + cards);
+
         loadProvidersAndSports(sport, cards, link);
         if(map.offsetWidth > 0 && map.offsetHeight > 0){
         }
@@ -1026,7 +1023,7 @@ function MapFunctions(baseelem, height){
     }
 
     function generateRentalPopup(guidesSt, j){
-      console.log('972' + guidesSt);
+
       var div = L.DomUtil.create('div');
       var h3 = L.DomUtil.create('h3');
         h3.textContent = guidesSt.provider;
@@ -1044,7 +1041,7 @@ function MapFunctions(baseelem, height){
         btn.textContent = 'Read more ~';
         div.appendChild(btn);
         btn.addEventListener('click', function(e){
-          console.log(JSON.stringify(guidesSt));
+
           var url = encodeURI(window.location.origin + '/provider?alias=' + guidesSt.data.alias);
           window.location.replace(url);
         });
@@ -1084,7 +1081,7 @@ function MapFunctions(baseelem, height){
         btn3 = L.DomUtil.create('button', 'sms2');
         btn3.textContent = 'next';
         addclasses(btn3, ['btn', 'sms2', 'bounceOnHover', 'bookguideBtn']);
-        console.log(guidesSt);
+
         btn3.dataset.code = guidesSt.data.verificationcode;
         btn3.dataset.sport = guidesSt.data.services[j];
         div.appendChild(btn3);
@@ -1094,7 +1091,7 @@ function MapFunctions(baseelem, height){
         btn3.textContent = 'next';
         addclasses(btn3, ['btn', 'sms2', 'bounceOnHover', 'btnnext', 'providers', 'hirechoice', 'selectProvider']);
         btn3.dataset.pageid = '1';
-        console.log(guidesSt);
+
         btn3.dataset.provider = guidesSt.provider;
         btn3.dataset.hirechoice = guidesSt.data.services[j];
         div.appendChild(btn3);
@@ -1124,7 +1121,7 @@ function MapFunctions(baseelem, height){
     }
 
     function color(jobType){
-      console.log('jobType:' + jobType);
+
       if(jobType === 'race bike rental'){
         return 'blue';
       }
@@ -1201,7 +1198,7 @@ function MapFunctions(baseelem, height){
     }
 
     function uniques(arr) {
-      console.log('UNIQUES' + arr);
+
         var a = [];
         for (var i=0, l=arr.length; i<l; i++)
             if (a.indexOf(arr[i]) === -1 && arr[i] !== '')
@@ -1211,7 +1208,7 @@ function MapFunctions(baseelem, height){
 
     function hideOrDisplaySportCards(providers){
       //var providers = JSON.parse(c);
-      console.log(JSON.stringify(providers));
+
       var servicesBoiledDown = [];
       providers.forEach(function(e, count){
         e.data.services.forEach(function(e){
@@ -1226,7 +1223,7 @@ function MapFunctions(baseelem, height){
           });
 
           var uniqueEl = uniques(servicesBoiledDown);
-          console.log('uniqueEl' + uniqueEl);
+
           uniqueEl.forEach(function(e){
 
             var el = document.querySelectorAll("[id='"+ e +"']");
@@ -1246,7 +1243,7 @@ function MapFunctions(baseelem, height){
       }
       var radius = addGuideRadius(guidesSt.coordinates, parseInt(guidesSt.data.radius));
       btn.addEventListener('click', function(){
-        console.log('clicked');
+
         if(clickCount % 2){
           radius.addTo(radiae);
         }
@@ -1275,15 +1272,15 @@ function MapFunctions(baseelem, height){
       var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
       var d = R * c;
-      console.log(d + 'witin');
-      console.log(radius + 'witin');
+
+
       if(d > parseInt(radius) * 1000){
-        console.log('outside');
+
         locationValid = false;
         return false;
       }
       else{
-        console.log('inside');
+
         locationValid = true;
         return true;
       }
