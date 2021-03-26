@@ -737,7 +737,6 @@ function MapFunctions(baseelem, height){
       swapMarkerparam = swapMarkerparam;
       save = save;
 
-      //
       map.addEventListener('click', function onLocationFound(e) {
         if(circle){
           map.removeLayer(circle);
@@ -747,7 +746,7 @@ function MapFunctions(baseelem, height){
           lat = e.latlng.lat;
           lng = e.latlng.lng;
           meetingPointType = 'mapClick';
-          text = "Your chosen location: " + e.latlng.lat + ',' + e.latlng.lng;
+          text = `Your chosen location: ${e.latlng.lat}, ${e.latlng.lng} <button>Save this location</button>`;
 
           if(circle){
             radius = parseInt(document.getElementById('trainingradius').value * 1000);
