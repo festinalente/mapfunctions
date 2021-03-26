@@ -735,7 +735,7 @@ function MapFunctions(baseelem, height){
 
     function locateOnClick(swapMarkerparam, circle, save, routeArg) {
       swapMarkerparam = swapMarkerparam;
-      //save = save;
+      save = save;
 
       map.addEventListener('click', function onLocationFound(e) {
         if(circle){
@@ -754,7 +754,8 @@ function MapFunctions(baseelem, height){
           let button = document.createElement('button');
               button.classList.add('.btngreen');
               button.textContent = `Save this location?`;
-              button.addEventListener('click', function(){
+              button.addEventListener('click', function(e){
+                e.preventDefault();
                 save();
               });
               content.appendChild(button);
@@ -772,7 +773,7 @@ function MapFunctions(baseelem, height){
           }
           //displaytickprev(document.getElementById("trainingAreaHolder"));
           if(save){
-            save();
+            //save();
           }
         }
         //altered circle:
