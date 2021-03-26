@@ -748,11 +748,11 @@ function MapFunctions(baseelem, height){
           meetingPointType = 'mapClick';
           let content = document.createElement('div');
           let text = document.createElement('p');
-              text.textContent(`Your chosen location: ${e.latlng.lat}, ${e.latlng.lng}`);
+              text.textContent = `Your chosen location: ${e.latlng.lat}, ${e.latlng.lng}`;
               content.appendChild(text);
           let button = document.createElement('button');
               button.classList.add('.btngreen');
-              button.text = `Save this location?`;
+              button.textContent = `Save this location?`;
 
            //<button class='btngreen'>Save this location?</button>;
 
