@@ -385,7 +385,7 @@ function MapFunctions(baseelem, height){
 
         let content = document.createElement('div');
         let text = document.createElement('p');
-            text.textContent = `Your chosen location: ${e.latlng.lat}, ${e.latlng.lng}`;
+            text.textContent = `Your current location: ${e.latlng.lat}, ${e.latlng.lng}`;
             text.style.color = '#000';
             content.appendChild(text);
         let button = document.createElement('button');
@@ -397,9 +397,7 @@ function MapFunctions(baseelem, height){
             });
             content.appendChild(button);
 
-
-
-        swapMarker(e.latlng.lat, e.latlng.lng, "Your current location", true);
+        swapMarker(e.latlng.lat, e.latlng.lng, content, true);
         if(route){
           route([{lat: e.latlng.lat, lng: e.latlng.lng},{lat: lat, lng: lng}]);
         }
