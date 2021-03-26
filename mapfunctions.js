@@ -251,7 +251,8 @@ function MapFunctions(baseelem, height){
           route,
           mapAsParam,
           titleText,
-          explanatoryParagraph
+          explanatoryParagraph,
+          saveFunction
         ){
         baselemForBtns = document.querySelector(baselemForBtns);
         buttonBase = baselemForBtns;
@@ -347,11 +348,11 @@ function MapFunctions(baseelem, height){
             event.preventDefault();
             if(route){
               meetingPointType = 'currentLocation';
-              locate(map);
+              locate(map, saveFunction);
             }
             else{
               meetingPointType = 'currentLocation';
-              locate(mapAsParam);
+              locate(mapAsParam, saveFunction);
             }
           });
           baselemForBtns.appendChild(locationBtn);
@@ -367,11 +368,11 @@ function MapFunctions(baseelem, height){
 
 
     this.locate = function(mapAsParam){
-      locate(mapAsParam);
+      locate(mapAsParam, saveFunction);
       return this;
     };
 
-    function locate(mapAsParam) {
+    function locate(mapAsParam, saveFunction) {
       if(mapAsParam){
         map = mapAsParam;
       }
@@ -381,6 +382,23 @@ function MapFunctions(baseelem, height){
 
         lat = e.latlng.lat;
         lng = e.latlng.lng;
+
+        let content = document.createElement('div');
+        let text = document.createElement('p');
+            text.textContent = `Your chosen location: ${e.latlng.lat}, ${e.latlng.lng}`;
+            text.style.color = '#000';
+            content.appendChild(text);
+        let button = document.createElement('button');
+            button.classList.add('.btngreen');
+            button.textContent = `Save this location?`;
+            button.addEventListener('click', function(e){
+              e.preventDefault();
+              saveFunction();
+            });
+            content.appendChild(button);
+
+
+
         swapMarker(e.latlng.lat, e.latlng.lng, "Your current location", true);
         if(route){
           route([{lat: e.latlng.lat, lng: e.latlng.lng},{lat: lat, lng: lng}]);
@@ -746,6 +764,7 @@ function MapFunctions(baseelem, height){
           lat = e.latlng.lat;
           lng = e.latlng.lng;
           meetingPointType = 'mapClick';
+
           let content = document.createElement('div');
           let text = document.createElement('p');
               text.textContent = `Your chosen location: ${e.latlng.lat}, ${e.latlng.lng}`;
@@ -761,8 +780,6 @@ function MapFunctions(baseelem, height){
               content.appendChild(button);
 
            //<button class='btngreen'>Save this location?</button>;
-
-
 
           if(circle){
             radius = parseInt(document.getElementById('trainingradius').value * 1000);
