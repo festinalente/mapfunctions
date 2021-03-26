@@ -763,8 +763,7 @@ function MapFunctions(baseelem, height){
             circle = L.circle({lat: e.latlng.lat, lng: e.latlng.lng }, radius).addTo(map);
           }
           if(swapMarkerparam){
-            swapMarker(lat, lng, content, clientLocationArg)
-            swapMarker();
+            swapMarker(lat, lng, content);
           }
           //displaytickprev(document.getElementById("trainingAreaHolder"));
           if(save){
