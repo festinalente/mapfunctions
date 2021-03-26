@@ -735,7 +735,7 @@ function MapFunctions(baseelem, height){
 
     function locateOnClick(swapMarkerparam, circle, save, routeArg) {
       swapMarkerparam = swapMarkerparam;
-      save = save;
+      //save = save;
 
       map.addEventListener('click', function onLocationFound(e) {
         if(circle){
@@ -749,10 +749,15 @@ function MapFunctions(baseelem, height){
           let content = document.createElement('div');
           let text = document.createElement('p');
               text.textContent = `Your chosen location: ${e.latlng.lat}, ${e.latlng.lng}`;
+              text.style.color = '#000';
               content.appendChild(text);
           let button = document.createElement('button');
               button.classList.add('.btngreen');
               button.textContent = `Save this location?`;
+              button.addEventListener('click', function(){
+                save();
+              });
+              content.appendChild(button);
 
            //<button class='btngreen'>Save this location?</button>;
 
