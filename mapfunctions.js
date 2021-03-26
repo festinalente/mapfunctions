@@ -746,13 +746,24 @@ function MapFunctions(baseelem, height){
           lat = e.latlng.lat;
           lng = e.latlng.lng;
           meetingPointType = 'mapClick';
-          text = `Your chosen location: ${e.latlng.lat}, ${e.latlng.lng} <button>Save this location</button>`;
+          let content = document.createElement('div');
+          let text = document.createElement('p');
+              text.textContent(`Your chosen location: ${e.latlng.lat}, ${e.latlng.lng}`);
+              content.appendChild(text);
+          let button = document.createElement('button');
+              button.classList.add('.btngreen');
+              button.text = `Save this location?`;
+
+           //<button class='btngreen'>Save this location?</button>;
+
+
 
           if(circle){
             radius = parseInt(document.getElementById('trainingradius').value * 1000);
             circle = L.circle({lat: e.latlng.lat, lng: e.latlng.lng }, radius).addTo(map);
           }
           if(swapMarkerparam){
+            swapMarker(lat, lng, content, clientLocationArg)
             swapMarker();
           }
           //displaytickprev(document.getElementById("trainingAreaHolder"));
