@@ -1150,7 +1150,7 @@ function MapFunctions(baseelem, height){
             route([guidesSt.coordinates,{lat: lat, lng: lng}], false, false);
           }
         });
-
+      folder.reattachEvents();
       return div;
     }
 
