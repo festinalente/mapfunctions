@@ -817,6 +817,7 @@ function MapFunctions(baseelem, height){
 
     this.loadProvidersAndSports = function(sport, cards, link){
       loadProvidersAndSports(sport, cards, link);
+
       return this;
     };
 
@@ -933,8 +934,10 @@ function MapFunctions(baseelem, height){
         }
         if(i === guidesSt.length-1){
           markers.addTo(map);
-          folder2.reattachEvents();
           radiae.addTo(map);
+          if((typeof(folder) !== "undefined")){
+            folder.reattachEvents();
+          }
           //loadguides(sport);
           //load guides originally added the guide cards, same thing could be used for suppliers.
         }
@@ -986,6 +989,7 @@ function MapFunctions(baseelem, height){
       //location-providers
       var bounds = map.getBounds();
       xhr({coordinates: bounds, sport: sport, cards: cards}, link, function(callback){
+
 
         if(cards){
           //n.b. note that in the rental template 'guides cards '
