@@ -12,7 +12,11 @@ like other part of the object constructor
 */
 
 /** @constructor */
+//pass a queryselector or an html element
 function MapFunctions(baseelem, height){
+  if(typeof baseelem === 'string'){
+    baseelem = document.querySelector(baseelem);
+  }
   //locally scoped characteristics of the map
   var textinput,
       buttonBase,
@@ -88,8 +92,7 @@ function MapFunctions(baseelem, height){
       function(tileURL){
         if(displayed === false){
           var trainingArea = document.createElement('div');
-          document.querySelector(baseelem).appendChild(trainingArea);
-          console.log(baseelem);
+          baseelem.appendChild(trainingArea);
           coordinates = document.createElement('div');
           trainingArea.appendChild(coordinates);
           trainingArea.style.height = height;
@@ -277,7 +280,7 @@ function MapFunctions(baseelem, height){
           meetGuide.setAttribute('type','button');
           meetGuide.addEventListener('click', function(event) {
             event.preventDefault();
-            var co = JSON.parse(document.querySelector(baseelem).dataset.coordinates);
+            var co = JSON.parse(baseelem.dataset.coordinates);
             lat = co[0];
             lng = co[1];
             meetingPointType = 'guidePoint';
@@ -384,7 +387,7 @@ function MapFunctions(baseelem, height){
         }
 
         console.log('scroll evt 341');
-        document.querySelector(baseelem).scrollIntoView({block: 'start',  behavior: 'smooth' });
+        baseelem.scrollIntoView({block: 'start',  behavior: 'smooth' });
         //enableRoute();
       });
       map.on('locationerror', function(e){
@@ -494,7 +497,7 @@ function MapFunctions(baseelem, height){
         return circle;
       }
       else{
-        el = document.querySelector(baseelem);
+        el = baseelem;
         circle = L.circle(JSON.parse(el.dataset.coordinates),parseInt(el.dataset.radius *1000));
         if(addtomap){
           circle.addTo(map);
@@ -552,10 +555,10 @@ function MapFunctions(baseelem, height){
     //route([guidesSt.coordinates,{lat: lat, lng: lng}], false, false);
     function route(points, draggable, whileDragging){
       if(!points){
-        points = [JSON.parse(document.querySelector(baseelem).dataset.coordinates), {lat: lat, lng: lng}];
+        points = [JSON.parse(baseelem.dataset.coordinates), {lat: lat, lng: lng}];
       }
       console.log('baselem' + baseelem);
-      let target = document.querySelector(baseelem).dataset.coordinates;
+      let target = baseelem.dataset.coordinates;
       providerCoordinates = points[0];
       console.log('route hit' + JSON.stringify(points[0]));
       console.log('route hit' + JSON.stringify(points[1]));
@@ -628,11 +631,11 @@ function MapFunctions(baseelem, height){
 
         distance = (e.route.summary.totalDistance/1000).toFixed(2) * 2;
         traveltime = returnTime(distance, 90);
-        travelCost = parseInt(document.querySelector(baseelem).dataset.travelcharge * distance);
+        travelCost = parseInt(baseelem.dataset.travelcharge * distance);
 
         var routetitle = "This requires a " + distance + " km return trip taking about " + traveltime + " h.";
 
-        if(document.querySelector(baseelem).dataset.travelcharge != 0){
+        if(baseelem.dataset.travelcharge != 0){
           routetitle += " This has an added cost of €" + (travelCost / 100).toFixed(2) + ".";
         }
 
@@ -719,7 +722,7 @@ function MapFunctions(baseelem, height){
         guidePoint = guidemarker.bindPopup(message).openPopup();
       }
       else{
-        guidemarker = L.marker(JSON.parse(document.querySelector(baseelem).dataset.coordinates), {draggable: false}).addTo(map);
+        guidemarker = L.marker(JSON.parse(baseelem.dataset.coordinates), {draggable: false}).addTo(map);
         guidePoint = guidemarker.bindPopup('This guide\'s meetup point').openPopup();
       }
       return this;
@@ -744,15 +747,13 @@ function MapFunctions(baseelem, height){
           lat = e.latlng.lat;
           lng = e.latlng.lng;
           meetingPointType = 'mapClick';
-          text = "Your chosen location";
+          text = "Your chosen location: " + e.latlng.lat + ',' + e.latlng.lng;
 
           if(circle){
-            console.log('inside swap circle');
             radius = parseInt(document.getElementById('trainingradius').value * 1000);
             circle = L.circle({lat: e.latlng.lat, lng: e.latlng.lng }, radius).addTo(map);
           }
           if(swapMarkerparam){
-            console.log('inside swap marker');
             swapMarker();
           }
           //displaytickprev(document.getElementById("trainingAreaHolder"));
@@ -778,7 +779,7 @@ function MapFunctions(baseelem, height){
           }
         }
         if(enableroute){
-          route([JSON.parse(document.querySelector(baseelem).dataset.coordinates), {lat: e.latlng.lat, lng: e.latlng.lng}]);
+          route([JSON.parse(baseelem.dataset.coordinates), {lat: e.latlng.lat, lng: e.latlng.lng}]);
         }
       });
       return this;
